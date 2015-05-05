@@ -1,30 +1,42 @@
 var canvas = document.getElementById('main-canvas');
 var context = canvas.getContext("2d");
 
-var originX = 400;
-var originY = 400;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+var originX = window.innerWidth / 2;
+var originY = window.innerHeight / 2;
+
+scaleCanvas(canvas);
+
 var squareSize = 5e4;
 
-var mag = 1e2;
+var mag = 200;
 var xy = [0, 0];
+var iteration = 0;
+var step = 0.0006;
 
-context.fillStyle = "#444";
+context.fillStyle = "rgba(0, 0, 0, 0.008)";
 
-var a = 0.97;
-var b = -1.90;
-var c = 1.38;
-var d = -1.50;
+//var a = 0.97;
+var a = getRandomInt(-4, 5);
+//var b = -1.90;
+var b = getRandomInt(-4, 5);
+//var c = 1.38;
+var c = getRandomInt(-4, 5);
+//var d = -1.50;
+var d = getRandomInt(-4, 5);
 
-var up = true;
+var up = false;
 
 var divA = document.getElementById('a');
 var divB = document.getElementById('b');
 var divC = document.getElementById('c');
 var divD = document.getElementById('d');
 
-setInterval(function () {
-
-  context.clearRect(0, 0, canvas.width, canvas.height);
+function render() {
+  iteration += 1;
+  //context.clearRect(0, 0, canvas.width, canvas.height);
 
   if (c >= 4) {
     up = false;
@@ -32,11 +44,11 @@ setInterval(function () {
     up = true;
   }
 
-  up ? c += 0.01
-     : c -= 0.01;
+  up ? c += step
+     : c -= step;
 
-  up ? b += 0.01
-     : b -= 0.01;
+  up ? b += step 
+     : b -= step;
 
   divA.innerHTML = a;
   divB.innerHTML = b;
@@ -47,7 +59,11 @@ setInterval(function () {
     fillFromAbsoluteOrigin(xy[0], xy[1]);
     xy = deJongIFS(xy[0], xy[1], a, b, c, d);
   }
-}, 100);
+
+  window.requestAnimationFrame(render);
+}
+
+window.requestAnimationFrame(render);
 
 function fillFromAbsoluteOrigin(x, y) {
   x = (x * mag) + originX;
@@ -83,3 +99,17 @@ function deJongIFS(x, y, a, b, c, d) {
     Math.sin(c * x) - Math.cos(d * y)
   ];
 }
+
+// https://github.com/component/autoscale-canvas
+function scaleCanvas(canvas){
+  var ctx = canvas.getContext('2d');
+  var ratio = window.devicePixelRatio || 1;
+  if (1 != ratio) {
+    canvas.style.width = canvas.width + 'px';
+    canvas.style.height = canvas.height + 'px';
+    canvas.width *= ratio;
+    canvas.height *= ratio;
+    ctx.scale(ratio, ratio);
+  }
+  return canvas;
+};
