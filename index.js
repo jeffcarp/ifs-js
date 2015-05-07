@@ -50,10 +50,12 @@ function render() {
   up ? b += step 
      : b -= step;
 
-  divA.innerHTML = a;
-  divB.innerHTML = b;
-  divC.innerHTML = c;
-  divD.innerHTML = d;
+  if (divA) {
+    divA.innerHTML = a;
+    divB.innerHTML = b;
+    divC.innerHTML = c;
+    divD.innerHTML = d;
+  }
 
   for (var i = 0; i < squareSize; i++) {
     fillFromAbsoluteOrigin(xy[0], xy[1]);
